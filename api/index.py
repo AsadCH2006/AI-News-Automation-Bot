@@ -22,7 +22,7 @@ HTML_TEMPLATE = """
                     <span class="inline-block w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
                     <h1 class="text-2xl font-bold tracking-tight text-white">AI News Automation Hub</h1>
                 </div>
-                <p class="text-sm text-slate-400 mt-1">Autonomous multi-agent intelligence briefing streamed to Slack & Sheets.</p>
+                <p class="text-sm text-slate-400 mt-1">Autonomous intelligence briefing streamed to Slack & Google Sheets.</p>
             </div>
             <button onclick="triggerFetch()" id="fetch-btn" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-medium text-sm transition-all shadow-lg shadow-indigo-600/20 active:scale-95 flex items-center gap-2 cursor-pointer">
                 <span>⚡ Run Manual Pipeline</span>
@@ -35,12 +35,12 @@ HTML_TEMPLATE = """
             <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl">
                 <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">System Status</h3>
                 <p class="text-lg font-semibold text-emerald-400">Online & Ready</p>
-                <p class="text-xs text-slate-500 mt-1">Vercel Edge Functions Active</p>
+                <p class="text-xs text-slate-500 mt-1">Vercel Serverless Active</p>
             </div>
             <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl">
                 <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Schedule Type</h3>
                 <p class="text-lg font-semibold text-indigo-400">Daily Automated</p>
-                <p class="text-xs text-slate-500 mt-1">Configured via vercel.json</p>
+                <p class="text-xs text-slate-500 mt-1">Cron Enabled via Config</p>
             </div>
             <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl">
                 <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Integrations</h3>
@@ -53,14 +53,14 @@ HTML_TEMPLATE = """
             <h2 class="text-lg font-semibold tracking-tight text-white mb-4">Latest Processed Briefings</h2>
             <div id="news-container" class="space-y-4">
                 <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/60 text-slate-400 text-center">
-                    Click <span class="text-indigo-400 font-semibold">"Run Manual Pipeline"</span> above to pull and process fresh AI headlines instantly.
+                    Click <span class="text-indigo-400 font-semibold">"Run Manual Pipeline"</span> above to fetch and process fresh AI headlines instantly.
                 </div>
             </div>
         </div>
     </div>
 
     <footer class="border-t border-slate-900 py-6 text-center text-xs text-slate-600">
-        AI News Automation Bot &bull; Powered by Groq, Serper, & Vercel Serverless.
+        AI News Automation Bot &bull; Powered by Groq, Serper, & Vercel.
     </footer>
 
     <script>
@@ -95,7 +95,7 @@ HTML_TEMPLATE = """
                 }} else {{
                     throw new Error(data.error || 'Unknown execution error');
                 }}
-            } catch (err) {{
+            }} catch (err) {{
                 statusBox.className = 'mb-8 p-4 rounded-xl bg-rose-950/40 border border-rose-800/50 text-rose-300 text-sm';
                 statusBox.innerHTML = '❌ Error executing pipeline: ' + err.message;
             }} finally {{
@@ -114,7 +114,6 @@ class handler(BaseHTTPRequestHandler):
             path_parts = self.path.split("?")
             is_run = len(path_parts) > 1 and "run=true" in path_parts[1]
 
-            # If user visits normally without ?run=true, render the gorgeous Dashboard UI
             if not is_run:
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
@@ -122,7 +121,6 @@ class handler(BaseHTTPRequestHandler):
                 self.wfile.write(HTML_TEMPLATE.encode('utf-8'))
                 return
 
-            # Otherwise, execute the background pipeline action
             serper_api_key = os.environ.get("SERPER_API_KEY")
             groq_api_key = os.environ.get("GROQ_API_KEY")
             slack_webhook = os.environ.get("SLACK_WEBHOOK_URL")
@@ -207,3 +205,6 @@ class handler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+
+# Vercel entrypoint mapping requirement
+app = handler
