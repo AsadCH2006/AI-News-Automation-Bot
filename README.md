@@ -32,6 +32,11 @@ An autonomous, serverless AI-powered news aggregator and intelligence pipeline. 
 
 ```text
 AI-News-Automation-Bot/
+├── tools/
+├──   └── sheets_tool.py
+├──   └── news__fetcher_tool.py
+├──   └── slack_tool.py
+├──   └── summarizer_tool.py
 ├── api/
 │   └── index.py         # Main Flask server, Dashboard template, and Pipeline logic
 ├── requirements.txt     # Python dependencies (Flask runtime)
