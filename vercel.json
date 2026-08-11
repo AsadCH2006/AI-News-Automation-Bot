@@ -9,13 +9,13 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "api/index.py"
+      "destination": "/api/index.py"
     }
   ],
   "crons": [
     {
-      "path": "/api/run-news-bot",
-      "schedule": "0 */6 * * *"
+      "path": "/api/index",
+      "schedule": "0 0 * * *"
     }
   ]
 }
